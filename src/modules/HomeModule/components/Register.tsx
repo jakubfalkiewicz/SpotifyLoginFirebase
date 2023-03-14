@@ -41,6 +41,12 @@ function Register() {
                         </button>
                     </div>
                 </div>
+                <div className='register_component_divider'>
+                    <div className='register_component_divider_bar'></div>
+                    <div className='register_component_divider_text'>or</div>
+                    <div className='register_component_divider_bar'></div>
+                </div>
+                <div className='register_component_email_sign'>Sign up with your email address</div>
                 <div>Email</div>
                 <input onChange={(e) => setEmail(e.target.value)} />
                 <div>Password</div>
