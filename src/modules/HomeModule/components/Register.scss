@@ -125,9 +125,19 @@
       font-weight: 400;
       font-size: 14px;
       line-height: 17px;
+      cursor: pointer;
       &:hover,
       :focus {
         border-color: #000000;
+      }
+      &--1 {
+        width: calc(189px - 4rem);
+      }
+      &--2 {
+        width: calc(110px - 4rem);
+      }
+      &--3 {
+        width: calc(119px - 4rem);
       }
     }
     &__field.invalid {
@@ -151,18 +161,51 @@
       .input-fields {
         display: flex;
         gap: 0.75rem;
-        :nth-child(1) {
-          width: calc(189px - 4rem);
-        }
-        :nth-child(2) {
-          width: calc(110px - 4rem);
-        }
-        :nth-child(3) {
-          width: calc(119px - 4rem);
-        }
+        position: relative;
       }
     }
   }
+  &__dropdown {
+    &__tab {
+      width: 189px;
+      height: auto;
+      min-height: 130px;
+      border: 1px solid #444444;
+      background-color: #ffffff;
+      position: absolute;
+      left: 0px;
+      top: 4rem;
+      padding: 1rem 0.75rem;
+      border-radius: 17px;
+    }
+    &__field {
+      padding: 0.5rem 0.75rem;
+      cursor: pointer;
+      width: 100%;
+      border-radius: 0.5rem;
+    }
+    &__field:hover {
+      background: #f0f0f0;
+    }
+    &__default {
+      color: #848484;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      > img {
+        width: 0.75rem;
+        height: 0.75rem;
+      }
+    }
+    &__default.active {
+      color: #000000;
+    }
+  }
+
+  // &__dropdown__field {
+  //   padding: 0.5rem 0.75rem;
+  // }
   &__appear-info {
     margin-top: -1rem;
     font-weight: 400;

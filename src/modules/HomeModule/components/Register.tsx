@@ -7,6 +7,7 @@ import Input from './Input';
 import * as Yup from 'yup';
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { WarningIcon } from '@/assets';
+import { Arrow } from '@/assets';
 
 const validationSchema = Yup.object().shape({
     email: Yup.string()
@@ -31,7 +32,7 @@ const validationSchema = Yup.object().shape({
     year: Yup.number()
         .integer("Year must be an integer")
         .min(1900, "Year must be greater than or equal to 1900")
-        .max(2100, "Year must be less than or equal to 2100")
+        .max(2010, "Year must be less than or equal to 2100")
         .required("Year is required"),
 });
 
@@ -71,6 +72,12 @@ const Register: React.FC = () => {
                 const errorMessage = error.message;
                 console.log(errorCode, errorMessage)
             });
+    }
+
+    const [monthTable, setMonthTable] = useState<boolean>(false)
+    function handleMonthSelect(month: string) {
+        userData.month = month;
+        setMonthTable(!monthTable)
     }
 
     return (
@@ -129,12 +136,28 @@ const Register: React.FC = () => {
                             <div className='register__input register__input--date'>
                                 <label htmlFor='username' className="register__input__label">What&#39;s your date of birth</label>
                                 <div className='input-fields'>
-                                    <Field type="dropdown" name="month" id="month" className={`register__input__field ${errors.month && touched.month ? 'invalid' : ''}`} placeholder='Month' />
-                                    <Field type="number" name="day" id="day" className={`register__input__field ${errors.day && touched.day ? 'invalid' : ''}`} placeholder='DD' min={1} max={31} />
-                                    <Field type="number" name="year" id="year" className={`register__input__field ${errors.year && touched.year ? 'invalid' : ''}`} placeholder='YYYY' min={1900} max={2010} />
+                                    <div id="month" className={`register__input__field  register__input__field--1 ${errors.month && touched.month ? 'invalid' : ''}`} placeholder='Month' onClick={() => setMonthTable(!monthTable)}>
+                                        <div className={`register__dropdown__default ${userData.month !== "" ? "active" : ""}`}>{userData.month !== "" ? userData.month : "Month"} <img src={Arrow}></img></div>
+                                    </div>
+                                    {monthTable ? <div className='register__dropdown__tab'>
+                                        <div className='register__dropdown__field' onClick={() => handleMonthSelect('January')}>January</div>
+                                        <div className='register__dropdown__field' onClick={() => handleMonthSelect('February')}>February</div>
+                                        <div className='register__dropdown__field' onClick={() => handleMonthSelect('March')}>March</div>
+                                        <div className='register__dropdown__field' onClick={() => handleMonthSelect('April')}>April</div>
+                                        <div className='register__dropdown__field' onClick={() => handleMonthSelect('May')}>May</div>
+                                        <div className='register__dropdown__field' onClick={() => handleMonthSelect('June')}>June</div>
+                                        <div className='register__dropdown__field' onClick={() => handleMonthSelect('July')}>July</div>
+                                        <div className='register__dropdown__field' onClick={() => handleMonthSelect('August')}>August</div>
+                                        <div className='register__dropdown__field' onClick={() => handleMonthSelect('September')}>September</div>
+                                        <div className='register__dropdown__field' onClick={() => handleMonthSelect('October')}>October</div>
+                                        <div className='register__dropdown__field' onClick={() => handleMonthSelect('November')}>November</div>
+                                        <div className='register__dropdown__field' onClick={() => handleMonthSelect('December')}>December</div>
+                                    </div> : null}
+                                    <Field type="number" name="day" id="day" className={`register__input__field register__input__field--2 ${errors.day && touched.day ? 'invalid' : ''}`} placeholder='DD' min={1} max={31} />
+                                    <Field type="number" name="year" id="year" className={`register__input__field register__input__field--3 ${errors.year && touched.year ? 'invalid' : ''}`} placeholder='YYYY' min={1900} max={2010} />
                                 </div>
 
-                                <ErrorMessage name="username">{msg => <div className='register__input__error' ><img src={WarningIcon} alt="warning-icon"></img>{msg}</div>}</ErrorMessage>
+                                <ErrorMessage name="month">{msg => <div className='register__input__error' ><img src={WarningIcon} alt="warning-icon"></img>{msg}</div>}</ErrorMessage>
                             </div>
                             <button type="submit" >
                                 Submit
