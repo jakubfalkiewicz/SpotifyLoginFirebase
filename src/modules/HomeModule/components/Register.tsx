@@ -32,7 +32,7 @@ const validationSchema = Yup.object().shape({
     year: Yup.number()
         .integer("Year must be an integer")
         .min(1900, "Year must be greater than or equal to 1900")
-        .max(2010, "Year must be less than or equal to 2100")
+        .max(2010, "Year must be less than or equal to 2010")
         .required("Year is required"),
 });
 
@@ -44,6 +44,8 @@ interface userInterface {
     month: string,
     day: number | string,
     year: number | string,
+    gender: string,
+    share: boolean
 }
 
 const Register: React.FC = () => {
@@ -54,7 +56,9 @@ const Register: React.FC = () => {
         username: "",
         month: "",
         day: "",
-        year: ""
+        year: "",
+        gender: "",
+        share: false
     })
 
     const handleSubmit = (values: userInterface) => {
@@ -110,7 +114,7 @@ const Register: React.FC = () => {
                     validationSchema={validationSchema}
                     onSubmit={handleSubmit}
                 >
-                    {({ errors, touched }) => (
+                    {({ errors, touched, setFieldValue }) => (
                         <Form className='register__inputs-container'>
                             <div className='register__input'>
                                 <label htmlFor='email' className="register__input__label">What&#39;s your email?</label>
@@ -134,39 +138,74 @@ const Register: React.FC = () => {
                             </div>
                             <div className='register__appear-info'>This appears on your profile.</div>
                             <div className='register__input register__input--date'>
-                                <label htmlFor='username' className="register__input__label">What&#39;s your date of birth</label>
+                                <label htmlFor='birthDate' className="register__input__label">What&#39;s your date of birth</label>
                                 <div className='input-fields'>
-                                    <div id="month" className={`register__input__field  register__input__field--1 ${errors.month && touched.month ? 'invalid' : ''}`} placeholder='Month' onClick={() => setMonthTable(!monthTable)}>
-                                        <div className={`register__dropdown__default ${userData.month !== "" ? "active" : ""}`}>{userData.month !== "" ? userData.month : "Month"} <img src={Arrow}></img></div>
+                                    <div className='input-field'>
+                                        <label htmlFor='month' className="register__input__label register__input__label--date">Month</label>
+                                        <div id="month" className={`register__input__field  register__input__field--1 ${errors.month && touched.month ? 'invalid' : ''}`} placeholder='Month' onClick={() => setMonthTable(!monthTable)}>
+                                            <Field readOnly type="text" name="month" id="month" className={`register__dropdown__default ${errors.month && touched.month ? 'invalid' : ''}`} placeholder='Month' />
+                                            <img src={Arrow}></img>
+                                            {/* <div className={`register__dropdown__default ${userData.month !== "" ? "active" : ""}`}>{userData.month !== "" ? userData.month : "Month"} <img src={Arrow}></img></div> */}
+                                        </div>
+                                        {monthTable ? <div className='register__dropdown__tab'>
+                                            <div className='register__dropdown__field' onClick={() => { setFieldValue('month', "January"); handleMonthSelect('January') }}>January</div>
+                                            <div className='register__dropdown__field' onClick={() => { setFieldValue('month', "February"); handleMonthSelect('February') }}>February</div>
+                                            <div className='register__dropdown__field' onClick={() => { setFieldValue('month', "March"); handleMonthSelect('March') }}>March</div>
+                                            <div className='register__dropdown__field' onClick={() => { setFieldValue('month', "April"); handleMonthSelect('April') }}>April</div>
+                                            <div className='register__dropdown__field' onClick={() => { setFieldValue('month', "May"); handleMonthSelect('May') }}>May</div>
+                                            <div className='register__dropdown__field' onClick={() => { setFieldValue('month', "June"); handleMonthSelect('June') }}>June</div>
+                                            <div className='register__dropdown__field' onClick={() => { setFieldValue('month', "July"); handleMonthSelect('July') }}>July</div>
+                                            <div className='register__dropdown__field' onClick={() => { setFieldValue('month', "August"); handleMonthSelect('August') }}>August</div>
+                                            <div className='register__dropdown__field' onClick={() => { setFieldValue('month', "September"); handleMonthSelect('September') }}>September</div>
+                                            <div className='register__dropdown__field' onClick={() => { setFieldValue('month', "October"); handleMonthSelect('October') }}>October</div>
+                                            <div className='register__dropdown__field' onClick={() => { setFieldValue('month', "November"); handleMonthSelect('November') }}>November</div>
+                                            <div className='register__dropdown__field' onClick={() => { setFieldValue('month', "December"); handleMonthSelect('December') }}>December</div>
+                                        </div> : null}
+                                        <ErrorMessage name="month">{msg => <div className='register__input__error' ><img src={WarningIcon} alt="warning-icon"></img>{msg}</div>}</ErrorMessage>
                                     </div>
-                                    {monthTable ? <div className='register__dropdown__tab'>
-                                        <div className='register__dropdown__field' onClick={() => handleMonthSelect('January')}>January</div>
-                                        <div className='register__dropdown__field' onClick={() => handleMonthSelect('February')}>February</div>
-                                        <div className='register__dropdown__field' onClick={() => handleMonthSelect('March')}>March</div>
-                                        <div className='register__dropdown__field' onClick={() => handleMonthSelect('April')}>April</div>
-                                        <div className='register__dropdown__field' onClick={() => handleMonthSelect('May')}>May</div>
-                                        <div className='register__dropdown__field' onClick={() => handleMonthSelect('June')}>June</div>
-                                        <div className='register__dropdown__field' onClick={() => handleMonthSelect('July')}>July</div>
-                                        <div className='register__dropdown__field' onClick={() => handleMonthSelect('August')}>August</div>
-                                        <div className='register__dropdown__field' onClick={() => handleMonthSelect('September')}>September</div>
-                                        <div className='register__dropdown__field' onClick={() => handleMonthSelect('October')}>October</div>
-                                        <div className='register__dropdown__field' onClick={() => handleMonthSelect('November')}>November</div>
-                                        <div className='register__dropdown__field' onClick={() => handleMonthSelect('December')}>December</div>
-                                    </div> : null}
-                                    <Field type="number" name="day" id="day" className={`register__input__field register__input__field--2 ${errors.day && touched.day ? 'invalid' : ''}`} placeholder='DD' min={1} max={31} />
-                                    <Field type="number" name="year" id="year" className={`register__input__field register__input__field--3 ${errors.year && touched.year ? 'invalid' : ''}`} placeholder='YYYY' min={1900} max={2010} />
+                                    <div className='input-field'>
+                                        <label htmlFor='day' className="register__input__label register__input__label--date">Day</label>
+                                        <Field type="number" name="day" id="day" className={`register__input__field register__input__field--2 ${errors.day && touched.day ? 'invalid' : ''}`} placeholder='DD' min={1} max={31} />
+                                        <ErrorMessage name="day">{msg => <div className='register__input__error' ><img src={WarningIcon} alt="warning-icon"></img>{msg}</div>}</ErrorMessage>
+                                    </div>
+                                    <div className='input-field'>
+                                        <label htmlFor='year' className="register__input__label register__input__label--date">Year</label>
+                                        <Field type="number" name="year" id="year" className={`register__input__field register__input__field--3 ${errors.year && touched.year ? 'invalid' : ''}`} placeholder='YYYY' min={1900} max={2010} />
+                                        <ErrorMessage name="year">{msg => <div className='register__input__error' ><img src={WarningIcon} alt="warning-icon"></img>{msg}</div>}</ErrorMessage>
+                                    </div>
                                 </div>
 
-                                <ErrorMessage name="month">{msg => <div className='register__input__error' ><img src={WarningIcon} alt="warning-icon"></img>{msg}</div>}</ErrorMessage>
+
                             </div>
+                            <label htmlFor='gender' className="register__input__label">Whats your gender?</label>
+                            <div className='register__radios'>
+                                <div className='register__radios__radio'>
+                                    <Field type="radio" name="gender" value="Male" />
+                                    <span className="checkmark"></span>
+                                    Male</div>
+                                <div className='register__radios__radio'>
+                                    <Field type="radio" name="gender" value="female" /><span className="checkmark"></span>Female</div>
+                                <div className='register__radios__radio'>
+                                    <Field type="radio" name="gender" value="non-binary" /><span className="checkmark"></span>Non-binary</div>
+                                <div className='register__radios__radio'>
+                                    <Field type="radio" name="gender" value="other" /><span className="checkmark"></span>Other</div>
+                                <div className='register__radios__radio'>
+                                    <Field type="radio" name="gender" value="prefer-not" /><span className="checkmark"></span>Prefer not to say</div>
+                            </div>
+                            <div className='register__share-date'>
+                                <Field type="checkbox" name="share" /><div>Share my registration date with Spotify’s content providers for
+                                    marketing purposes.</div>
+                            </div>
+                            <div>By clicking on sing-up. you agree to Sporify’s Terms and Conditions of Use.</div>
+                            <div>To learn more about how. Spotify collects, uses, shares and protects your
+                                personal data, please see Spotify’s Privacy Policy.</div>
                             <button type="submit" >
-                                Submit
+                                Sign up
                             </button>
+                            <div>Have an account? Log in.</div>
                         </Form>
                     )}
                 </Formik>
-                <div>Email</div>
-                <button onClick={() => registerUser()}>Register</button>
             </div>
         </div>
     )
