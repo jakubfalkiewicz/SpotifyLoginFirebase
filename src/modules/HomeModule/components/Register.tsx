@@ -1,13 +1,17 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import "./Register.scss"
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from '@/firebase';
 import { FacebookIcon, GoogleIcon } from '@/assets';
-import Input from './Input';
+// import Input from './Input';
 import * as Yup from 'yup';
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { WarningIcon } from '@/assets';
 import { Arrow } from '@/assets';
+import userInterface from '../interfaces/userInterface';
+import { useSelector, useDispatch } from "react-redux"
+import { setUser } from '@/redux/slices/userSlice';
+import { RootState } from '@/redux/store';
 
 const validationSchema = Yup.object().shape({
     email: Yup.string()
@@ -36,19 +40,11 @@ const validationSchema = Yup.object().shape({
         .required("Year is required"),
 });
 
-interface userInterface {
-    email: string,
-    confirmEmail: string,
-    password: string,
-    username: string,
-    month: string,
-    day: number | string,
-    year: number | string,
-    gender: string,
-    share: boolean
-}
-
 const Register: React.FC = () => {
+
+    const user = sessionStorage.getItem("user") ? JSON.parse(sessionStorage.getItem("user")!) : useSelector((state: RootState) => state.userHandler.user);
+    console.log(user)
+
     const [userData, setUserData] = useState<userInterface>({
         email: "",
         confirmEmail: "",
@@ -58,18 +54,21 @@ const Register: React.FC = () => {
         day: "",
         year: "",
         gender: "",
-        share: false
+        share: false,
+        loggedIn: false
     })
 
     const handleSubmit = (values: userInterface) => {
-        console.log(values);
+        registerUser({ ...values })
     };
 
-    function registerUser() {
-        createUserWithEmailAndPassword(auth, userData.email, userData.password)
+    const dispatch = useDispatch()
+
+    function registerUser(data: userInterface) {
+        createUserWithEmailAndPassword(auth, data.email, data.password)
             .then((userCredential) => {
-                const user = userCredential.user;
-                console.log(user)
+                // setUserData({ ...data, loggedIn: true })
+                dispatch(setUser({ ...data, loggedIn: true }))
             })
             .catch((error) => {
                 const errorCode = error.code;
@@ -87,6 +86,7 @@ const Register: React.FC = () => {
     return (
         <div className='register'>
             <div className='register__content'>
+                {user && <div>{user.email}</div>}
                 <div className='register__welcome'>
                     <div className='register__logo'>Spotify</div>
                     <div className='register__welcome-text'>Sign up for free to start listening.</div>
@@ -145,7 +145,6 @@ const Register: React.FC = () => {
                                         <div id="month" className={`register__input__field  register__input__field--1 ${errors.month && touched.month ? 'invalid' : ''}`} placeholder='Month' onClick={() => setMonthTable(!monthTable)}>
                                             <Field readOnly type="text" name="month" id="month" className={`register__dropdown__default ${errors.month && touched.month ? 'invalid' : ''}`} placeholder='Month' />
                                             <img src={Arrow}></img>
-                                            {/* <div className={`register__dropdown__default ${userData.month !== "" ? "active" : ""}`}>{userData.month !== "" ? userData.month : "Month"} <img src={Arrow}></img></div> */}
                                         </div>
                                         {monthTable ? <div className='register__dropdown__tab'>
                                             <div className='register__dropdown__field' onClick={() => { setFieldValue('month', "January"); handleMonthSelect('January') }}>January</div>
@@ -174,8 +173,6 @@ const Register: React.FC = () => {
                                         <ErrorMessage name="year">{msg => <div className='register__input__error' ><img src={WarningIcon} alt="warning-icon"></img>{msg}</div>}</ErrorMessage>
                                     </div>
                                 </div>
-
-
                             </div>
                             <label htmlFor='gender' className="register__input__label">Whats your gender?</label>
                             <div className='register__radios'>
@@ -196,13 +193,17 @@ const Register: React.FC = () => {
                                 <Field type="checkbox" name="share" /><div>Share my registration date with Spotify’s content providers for
                                     marketing purposes.</div>
                             </div>
-                            <div>By clicking on sing-up. you agree to Sporify’s Terms and Conditions of Use.</div>
-                            <div>To learn more about how. Spotify collects, uses, shares and protects your
-                                personal data, please see Spotify’s Privacy Policy.</div>
-                            <button type="submit" >
-                                Sign up
-                            </button>
-                            <div>Have an account? Log in.</div>
+                            <p className='terms'>By clicking on sing-up. you agree to Spotify’s <a className='link'>Terms and Conditions of Use<span>.</span></a></p>
+                            <p className='terms'> To learn more about how. Spotify collects, uses, shares and protects your
+                                personal data, please see <a className='link'>Spotify’s Privacy Policy<span>.</span></a></p>
+                            <div className='register__submit-button'>
+                                <button type="submit" >
+                                    Sign up
+                                </button>
+                            </div>
+                            <div className='register__login-link'>
+                                <p>Have an account? <a className='link'>Log in</a>.</p>
+                            </div>
                         </Form>
                     )}
                 </Formik>

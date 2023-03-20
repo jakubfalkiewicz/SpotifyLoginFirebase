@@ -14,7 +14,9 @@
     margin-top: 50px;
     margin-bottom: 50px;
     font-family: "Lato", sans-serif;
-    // border: 1px solid;
+    .user {
+      color: #000000;
+    }
   }
   &__welcome {
     display: flex;
@@ -105,6 +107,24 @@
     flex-direction: column;
     width: 100%;
     gap: 2rem;
+    .terms {
+      font-weight: 400;
+      font-size: 13px;
+      line-height: 16px;
+      text-align: center;
+      gap: 0.25rem;
+    }
+    .link {
+      color: var(--color-primary);
+      text-decoration: underline;
+      text-align: center;
+      cursor: pointer;
+      display: inline-flex;
+      > span {
+        text-decoration: none;
+        color: black;
+      }
+    }
   }
   &__input {
     display: flex;
@@ -273,13 +293,82 @@
       }
     }
   }
-  // &__dropdown__field {
-  //   padding: 0.5rem 0.75rem;
-  // }
+  &__share-date {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.125rem;
+    input[type="checkbox"] {
+      background-repeat: no-repeat;
+      background-position: center;
+      width: 1.75rem;
+      height: 1.25rem;
+      border: none; /* remove default checkbox border */
+      -webkit-appearance: none; /* remove default iOS styling */
+      -moz-appearance: none; /* remove default Firefox styling */
+      appearance: none; /* remove default styling */
+      border: 1px solid black;
+      border-radius: 0.375rem;
+      cursor: pointer;
+    }
+    input[type="checkbox"]:hover,
+    input[type="checkbox"]:checked {
+      border-color: var(--color-primary);
+    }
+
+    input[type="checkbox"]:checked {
+      background-image: url("../../../assets/images/Vector.png");
+      background-color: var(--color-primary);
+    }
+  }
+  &__login-link {
+    display: flex;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 19px;
+  }
+  &__submit-button {
+    display: flex;
+    justify-content: center;
+    button {
+      cursor: pointer;
+      background: var(--color-primary);
+      padding: 1.25rem 3.75rem;
+      border: 1px solid var(--color-primary);
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 19px;
+    }
+  }
   &__appear-info {
     margin-top: -1rem;
     font-weight: 400;
     font-size: 14px;
     line-height: 17px;
+  }
+}
+@media (max-width: 500px) {
+  .register {
+    &__content {
+      padding: 0 1rem;
+    }
+    &__input__field {
+      padding: 0 1.5rem;
+      &--1 {
+        max-width: calc(135px - 3rem);
+      }
+      &--2 {
+        max-width: calc(92px - 3rem);
+      }
+      &--3 {
+        max-width: calc(92px - 3rem);
+      }
+    }
+    input[type="checkbox"] {
+      width: 2.25rem;
+      height: 1.25rem;
+    }
   }
 }
