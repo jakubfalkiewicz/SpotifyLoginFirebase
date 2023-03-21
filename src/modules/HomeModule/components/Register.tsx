@@ -1,17 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import "./Register.scss"
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from '@/firebase';
-import { FacebookIcon, GoogleIcon } from '@/assets';
-// import Input from './Input';
+import { FacebookIcon, GoogleIcon, WarningIcon } from '@/assets';
 import * as Yup from 'yup';
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { WarningIcon } from '@/assets';
 import { Arrow } from '@/assets';
 import userInterface from '../interfaces/userInterface';
-import { useSelector, useDispatch } from "react-redux"
+import { useDispatch } from "react-redux"
 import { setUser } from '@/redux/slices/userSlice';
-import { RootState } from '@/redux/store';
+import { Link, useNavigate } from 'react-router-dom';
 
 const validationSchema = Yup.object().shape({
     email: Yup.string()
@@ -38,14 +36,12 @@ const validationSchema = Yup.object().shape({
         .min(1900, "Year must be greater than or equal to 1900")
         .max(2010, "Year must be less than or equal to 2010")
         .required("Year is required"),
+    gender: Yup.string().required("Gender is required")
 });
 
 const Register: React.FC = () => {
 
-    const user = sessionStorage.getItem("user") ? JSON.parse(sessionStorage.getItem("user")!) : useSelector((state: RootState) => state.userHandler.user);
-    console.log(user)
-
-    const [userData, setUserData] = useState<userInterface>({
+    const [userData] = useState<userInterface>({
         email: "",
         confirmEmail: "",
         password: "",
@@ -63,12 +59,14 @@ const Register: React.FC = () => {
     };
 
     const dispatch = useDispatch()
+    const navigate = useNavigate()
 
     function registerUser(data: userInterface) {
         createUserWithEmailAndPassword(auth, data.email, data.password)
             .then((userCredential) => {
-                // setUserData({ ...data, loggedIn: true })
-                dispatch(setUser({ ...data, loggedIn: true }))
+                const user = userCredential.user
+                dispatch(setUser({ email: user.email, loggedIn: true }))
+                navigate("/")
             })
             .catch((error) => {
                 const errorCode = error.code;
@@ -86,7 +84,6 @@ const Register: React.FC = () => {
     return (
         <div className='register'>
             <div className='register__content'>
-                {user && <div>{user.email}</div>}
                 <div className='register__welcome'>
                     <div className='register__logo'>Spotify</div>
                     <div className='register__welcome-text'>Sign up for free to start listening.</div>
@@ -189,6 +186,7 @@ const Register: React.FC = () => {
                                 <div className='register__radios__radio'>
                                     <Field type="radio" name="gender" value="prefer-not" /><span className="checkmark"></span>Prefer not to say</div>
                             </div>
+                            <ErrorMessage name="gender">{msg => <div className='register__input__error' ><img src={WarningIcon} alt="warning-icon"></img>{msg}</div>}</ErrorMessage>
                             <div className='register__share-date'>
                                 <Field type="checkbox" name="share" /><div>Share my registration date with Spotify’s content providers for
                                     marketing purposes.</div>
@@ -202,7 +200,7 @@ const Register: React.FC = () => {
                                 </button>
                             </div>
                             <div className='register__login-link'>
-                                <p>Have an account? <a className='link'>Log in</a>.</p>
+                                <p>Have an account? <Link className='link' to="/login">Log in</Link>.</p>
                             </div>
                         </Form>
                     )}

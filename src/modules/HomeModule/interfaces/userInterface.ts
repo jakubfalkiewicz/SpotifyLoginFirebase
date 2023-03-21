@@ -10,3 +10,9 @@ export default interface userInterface {
     share: boolean,
     loggedIn: boolean,
 }
+
+export default interface loginInterface {
+    email: string,
+    password: string,
+    loggedIn: boolean
+}

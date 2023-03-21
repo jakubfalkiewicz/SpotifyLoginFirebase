@@ -5,7 +5,6 @@ export const store = configureStore({
     reducer: {
         userHandler: userSliceReducer,
     },
-    // middleware: (getDefaultMiddleware) => getDefaultMiddleware()
 })
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
