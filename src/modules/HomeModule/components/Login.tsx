@@ -33,6 +33,7 @@ function Login() {
                 const user = userCredential.user
                 dispatch(setUser({ email: user.email, loggedIn: true }))
                 navigate("/")
+                navigate(0)
             })
             .catch((error) => {
                 const errorMessage = error.message;
